@@ -18,3 +18,10 @@ SELECT [location],[date],[total_cases],[population],ROUND(([total_cases]/populat
 FROM[dbo].[CovidDeaths]
 WHERE [location]LIKE '%Kenya%'
 ORDER BY [location],date
+
+--What countries have the highest infection rates
+SELECT [location],MAX([total_cases]) AS 'HighestInfectionCount' ,[population],MAX(ROUND(([total_cases]/population *100),2)) AS 'Infection_rate'
+FROM[dbo].[CovidDeaths]
+GROUP BY [location],population
+ORDER BY Infection_rate DESC
+
