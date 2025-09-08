@@ -63,7 +63,45 @@ ORDER BY [date] DESC
  JOIN[dbo].[CovidVaccinations] vac
  ON dea.location=vac.location
  AND dea.date=vac.date
- WHERE DEA.continent IS NOT NULL AND vac.new_vaccinations IS NOT NULL
- ORDER BY 1,2,3
+ WHERE DEA.continent IS NOT NULL
+ ORDER BY 2,3
 
+ --Using window function to roll out vaccination numbers by location
+  SELECT dea.continent,
+  dea.location,
+  dea.date,
+  dea.population,
+  vac.new_vaccinations,
+  SUM(CAST(vac.new_vaccinations AS INT)) OVER ( PARTITION BY dea.location ORDER BY  dea.date ) AS RunningTotal
+ FROM [dbo].[CovidDeaths] dea
+ JOIN[dbo].[CovidVaccinations] vac
+ ON dea.location=vac.location
+ AND dea.date=vac.date
+ WHERE DEA.continent IS NOT NULL AND  vac.new_vaccinations IS NOT NULL
+ ORDER BY 2,3
 
+--Check out the % of the country vaccinated
+--Use CTE
+WITH VaccinationTotals (continent, location, date,population,new_vaccinations,RunningTotal)
+AS
+(
+ SELECT dea.continent,
+  dea.location,
+  dea.date,
+  dea.population,
+  vac.new_vaccinations,
+  SUM(CAST(vac.new_vaccinations AS INT)) OVER ( PARTITION BY dea.location ORDER BY  dea.date ) AS RunningTotal
+ FROM [dbo].[CovidDeaths] dea
+ JOIN[dbo].[CovidVaccinations] vac
+ ON dea.location=vac.location
+ AND dea.date=vac.date
+ WHERE DEA.continent IS NOT NULL 
+
+)
+SELECT*,
+(RunningTotal/population)*100 AS VaccinationRate
+FROM VaccinationTotals
+ORDER BY 2,3
+ 
+ 
+ 
