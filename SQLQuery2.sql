@@ -47,7 +47,7 @@ WHERE [continent] IS NOT NULL
 GROUP BY [location]
 ORDER BY HighestDeathCount DESC
 
---Wich continents had the most fatalities
+--Which continents had the most fatalities
 SELECT continent,MAX(CAST([total_deaths] AS INT)) AS HighestDeathCount 
 FROM [dbo].[CovidDeaths]
 WHERE [continent] IS NOT NULL 
@@ -71,12 +71,13 @@ ORDER BY [date] DESC
  AND [dbo].[CovidDeaths].date=[dbo].[CovidVaccinations].date
 
  --Let's look at the total population in the world that has been vaccinated
- SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations
+ SELECT dea.continent,dea.location,
+ dea.date,dea.population,vac.new_vaccinations
  FROM [dbo].[CovidDeaths] dea
  JOIN[dbo].[CovidVaccinations] vac
  ON dea.location=vac.location
  AND dea.date=vac.date
- WHERE DEA.continent IS NOT NULL
+ WHERE DEA.continent IS NOT NULL AND vac.new_vaccinations IS NOT NULL
  ORDER BY 2,3
 
  --Using window function to roll out vaccination numbers by location
@@ -95,7 +96,8 @@ ORDER BY [date] DESC
 
 --Check out the % of the country vaccinated
 --Use CTE
-WITH VaccinationTotals (continent, location, date,population,new_vaccinations,RunningTotal)
+WITH VaccinationTotals (continent, 
+location, date,population,new_vaccinations,RunningTotal)
 AS
 (
  SELECT dea.continent,
