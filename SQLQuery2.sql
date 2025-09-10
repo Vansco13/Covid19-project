@@ -1,3 +1,4 @@
+USE [Portfolio Project]
 --SELECT * 
 --FROM[dbo].[CovidVaccinations]
 
@@ -7,11 +8,16 @@ FROM[dbo].[CovidDeaths]
 WHERE [continent] IS NOT NULL
 ORDER BY [location],date
 
+--Checks the global fatality rate
+SELECT SUM([total_cases]) AS total_cases,SUM(CAST([total_deaths] AS INT)) AS total_deaths, SUM(CAST([total_deaths] AS INT))/SUM([total_cases]) * 100 AS Global_Death_Rate
+FROM [dbo].[CovidDeaths]
+WHERE [continent] IS NOT NULL
+
 --Looking at total cases vs total deaths in Diff countries
 --Shows the likelihood of dying if you contract covid in your country
 SELECT [location],[date],[total_cases],[total_deaths],ROUND(([total_deaths]/[total_cases]*100),2) AS '%_Deaths'
 FROM[dbo].[CovidDeaths]
-WHERE [location]LIKE '%Kenya%'
+--WHERE [location]LIKE '%Kenya%'
 ORDER BY [location],date
 
 --Looking at the percentage of the population infected
@@ -25,6 +31,13 @@ SELECT [location],MAX([total_cases]) AS 'HighestInfectionCount' ,[population],MA
 FROM[dbo].[CovidDeaths]
 WHERE [continent] IS NOT NULL
 GROUP BY [location],population
+ORDER BY Infection_rate DESC
+
+--What countries have the highest infection rates by day
+SELECT  [location],[date],MAX([total_cases]) AS 'HighestInfectionCount' ,[population],MAX(ROUND(([total_cases]/population *100),2)) AS 'Infection_rate'
+FROM[dbo].[CovidDeaths]
+WHERE [continent] IS NOT NULL
+GROUP BY [location],[population],[date]
 ORDER BY Infection_rate DESC
 
 --Which countries had the most deaths
@@ -95,7 +108,7 @@ AS
  JOIN[dbo].[CovidVaccinations] vac
  ON dea.location=vac.location
  AND dea.date=vac.date
- WHERE DEA.continent IS NOT NULL 
+ WHERE DEA.continent IS NOT NULL AND vac.new_vaccinations IS NOT NULL
 
 )
 SELECT*,
