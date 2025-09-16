@@ -15,10 +15,11 @@ WHERE [continent] IS NOT NULL
 
 --Looking at total cases vs total deaths in Diff countries
 --Shows the likelihood of dying if you contract covid in your country
-SELECT [location],[date],MAX([total_cases]),[total_deaths],ROUND(([total_deaths]/[total_cases]*100),2) AS '%_Deaths'
-FROM[dbo].[CovidDeaths]
-WHERE [location]LIKE '%Kenya%'
-ORDER BY [location],date
+SELECT SUM([total_cases]) AS total_cases,SUM(CAST([total_deaths] AS INT)) AS total_deaths, SUM(CAST([total_deaths] AS INT))/SUM([total_cases]) * 100 AS Death_Rate
+FROM [dbo].[CovidDeaths]
+WHERE [location]='Kenya'
+
+
 
 --Looking at the percentage of the population infected
 SELECT [location],[date],[total_cases],[population],ROUND(([total_cases]/population *100),2) AS 'Infection_rate'
@@ -55,7 +56,8 @@ GROUP BY continent
 ORDER BY HighestDeathCount DESC
 
 --FINDING OUT THE GLOBAL NUMBERS OF FATALITIES AS OF THE MOST RECENT DATE
-SELECT [date],SUM([total_cases]) AS TotalCases,SUM(CAST([total_deaths] AS INT)) AS TotalDeaths,
+SELECT [date],SUM([total_cases]) AS TotalCases,
+SUM(CAST([total_deaths] AS INT)) AS TotalDeaths,
 SUM(CAST([total_deaths] AS INT))/SUM([total_cases]) * 100 AS GlobalDeathRate
 FROM [dbo].[CovidDeaths]
 WHERE [continent] IS NOT NULL
