@@ -1,4 +1,4 @@
-USE [Portfolio Project]
+
 --SELECT * 
 --FROM[dbo].[CovidVaccinations]
 
