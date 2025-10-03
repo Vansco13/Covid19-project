@@ -1,6 +1,9 @@
+--Explore the data
+SELECT * 
+FROM[dbo].[CovidVaccinations]
 
---SELECT * 
---FROM[dbo].[CovidVaccinations]
+SELECT  *
+FROM CovidDeaths
 
 --Select the data that I'll be using
 SELECT [location],[date],[total_cases],[new_cases],[total_deaths],[population]
@@ -8,6 +11,11 @@ FROM[dbo].[CovidDeaths]
 WHERE [continent] IS NOT NULL
 ORDER BY [location],date
 
+--Check the number of countries in the dataset
+SELECT COUNT(DISTINCT [location]) AS No_of_countries
+FROM CovidDeaths
+
+--Data Analysis
 --Checks the global fatality rate
 SELECT SUM([total_cases]) AS total_cases,SUM(CAST([total_deaths] AS INT)) AS total_deaths, SUM(CAST([total_deaths] AS INT))/SUM([total_cases]) * 100 AS Global_Death_Rate
 FROM [dbo].[CovidDeaths]
@@ -17,7 +25,7 @@ WHERE [continent] IS NOT NULL
 --Shows the likelihood of dying if you contract covid in your country
 SELECT SUM([total_cases]) AS total_cases,SUM(CAST([total_deaths] AS INT)) AS total_deaths, SUM(CAST([total_deaths] AS INT))/SUM([total_cases]) * 100 AS Death_Rate
 FROM [dbo].[CovidDeaths]
-WHERE [location]='Kenya'
+WHERE [location]='Kenya'--You can input your own country
 
 
 
