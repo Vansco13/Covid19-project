@@ -1,4 +1,4 @@
-# : Global covid 19 Data analysis project
+#  Global covid 19 Data analysis project
 
 ## Project Overview
 
